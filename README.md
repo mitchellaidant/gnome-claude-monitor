@@ -1,39 +1,49 @@
-# Claude Usage — GNOME Shell extension
+<h1 align="center">Claude Usage — GNOME Shell extension</h1>
 
-A top-bar indicator for **GNOME Shell 48** that shows your live **Claude Code** sessions and
-your **usage** against Claude's rolling limits, with a dropdown for detail.
+<p align="center">
+  <a href="https://github.com/AMitchell-GitHub/gnome-claude-monitor/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/AMitchell-GitHub/gnome-claude-monitor?logo=github&color=e76125"></a>
+  <a href="https://github.com/AMitchell-GitHub/gnome-claude-monitor/releases"><img alt="Total downloads" src="https://img.shields.io/github/downloads/AMitchell-GitHub/gnome-claude-monitor/total?logo=github&label=downloads&color=e76125"></a>
+  <img alt="GNOME Shell 48" src="https://img.shields.io/badge/GNOME_Shell-48-4A86CF?logo=gnome&logoColor=white">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/AMitchell-GitHub/gnome-claude-monitor?color=blue"></a>
+</p>
 
-Panel: `🤖 1/3 │ ⏱ 13% · 4h13m`
-- robot + `running/total` sessions (count turns orange when one is working)
-- speedometer + real 5-hour utilization and reset countdown
+<p align="center">
+  A top-bar indicator that shows your live <b>Claude Code</b> sessions and your <b>usage</b>
+  against Claude's rolling limits — at a glance, with a dropdown for the details.
+</p>
 
-
-<img width="392" height="36" alt="image" src="https://github.com/user-attachments/assets/49a81f29-fa9e-4e32-9546-c875df7e232b" />
-<br>
-<img width="506" height="636" alt="image" src="https://github.com/user-attachments/assets/f53791f5-7f1d-4b1f-9e8b-60f7faf67cc5" />
-
-
-
+<p align="center">
+  <img width="392" alt="Panel indicator: sessions running and 5-hour usage" src="https://github.com/user-attachments/assets/49a81f29-fa9e-4e32-9546-c875df7e232b">
+  <br><br>
+  <img width="506" alt="Dropdown: per-session tokens, 5h and weekly usage, plan tier" src="https://github.com/user-attachments/assets/f53791f5-7f1d-4b1f-9e8b-60f7faf67cc5">
+</p>
 
 ## Install
 
-### Option A — one-liner (recommended)
-
-Downloads the latest release and installs it:
+Paste this into a terminal — it downloads the latest release and installs it:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/AMitchell-GitHub/gnome-claude-monitor/main/online-install.sh | bash
 ```
 
-Then reload GNOME Shell: **X11** → `Alt`+`F2`, type `r`, `Enter`. **Wayland** → log out/in.
+Then **load it** by reloading GNOME Shell:
 
-### Option B — download a release
+- **X11:** press `Alt`+`F2`, type `r`, press `Enter` (your windows stay open)
+- **Wayland:** log out and back in
+
+That's it — look for the 🤖 in your top bar. Not sure which one you're on? Run
+`echo $XDG_SESSION_TYPE`.
+
+<details>
+<summary><b>Other ways to install</b> (release zip, or from source)</summary>
+
+**From a release zip**
 
 1. Grab `claude-usage.shell-extension.zip` from the [latest release](https://github.com/AMitchell-GitHub/gnome-claude-monitor/releases/latest).
 2. `gnome-extensions install --force claude-usage.shell-extension.zip`
-3. Reload the shell (above), then `gnome-extensions enable claude-usage@aidan.local`.
+3. Reload the shell (see above), then `gnome-extensions enable claude-usage@aidan.local`.
 
-### Option C — from source
+**From source**
 
 ```sh
 git clone https://github.com/AMitchell-GitHub/gnome-claude-monitor.git
@@ -41,76 +51,59 @@ cd gnome-claude-monitor
 ./install.sh        # copies into place + compiles the schema + enables
 ```
 
-Open settings any time: `gnome-extensions prefs claude-usage@aidan.local`.
+</details>
+
+## What you need
+
+- **GNOME Shell 48** (X11 or Wayland)
+- **[Claude Code](https://claude.com/claude-code)** installed and signed in — the extension reads its local files
 
 ## What it shows
 
-**Dropdown:**
-- **Sessions** — one row per live session: project name, status dot (busy/idle), uptime,
-  and that session's token usage (per-agent tokens over the last ~26h; hidden when idle beyond that window)
+The top bar stays compact: `🤖 1/3 │ ⏱ 13% · 4h13m` — running/total sessions (the count
+turns orange when one is working), then your 5-hour usage and reset countdown.
+
+Click it for the full picture:
+
+- **Sessions** — one row per live session: project name, busy/idle dot, uptime, and
+  **that session's token usage** (per-agent tokens over the last ~26h; hidden once a
+  session has been idle longer than that)
 - **Usage** — 5h window (% bar + reset countdown), weekly window (% + reset + any
-  model-specific opus/sonnet limits), plan tier, today's tokens
-- **Status line** — `Updated 12s ago · source: api`, or in red `⚠ Pull failed: HTTP 429`
-- **Refresh now**
+  model-specific Opus/Sonnet limits), your plan tier, and today's tokens
+- **Status line** — e.g. `Updated 12s ago · source: api`, or in red `⚠ Pull failed: HTTP 429`
+- **Refresh now** — force an immediate update
 
-**Preferences:** choose the top-bar **section** (left / center / right) and **position**
-within it — changes apply live.
+**Settings:** pick where it sits in the top bar (left / center / right, plus position) —
+changes apply live. Open them any time with `gnome-extensions prefs claude-usage@aidan.local`.
 
-## How it works
+## Your data stays on your machine
 
-| Shown | Source |
-|-------|--------|
+| Shown | Where it comes from |
+|-------|---------------------|
 | Sessions + busy/idle status | `~/.claude/sessions/*.json` (filtered to live PIDs via `/proc`) — local |
 | 5h + weekly usage % and reset | `GET https://api.anthropic.com/api/oauth/usage` — the same endpoint Claude Code's `/usage` and claude.ai/settings/usage use |
 | Plan tier | `~/.claude.json` (`oauthAccount`) — local |
 | Today's tokens + per-session tokens | `~/.claude/projects/*/*.jsonl` — local (transcript entries joined to sessions by `sessionId`) |
 
-The usage call uses your existing local OAuth token from `~/.claude/.credentials.json` as a
+The usage call reuses your existing local OAuth token from `~/.claude/.credentials.json` as a
 Bearer token to read **your own** usage. The token is read locally and sent only to
 `api.anthropic.com` — never stored, logged, or sent anywhere else. The API is polled about
 once a minute; the countdown ticks locally in between. If the API is unreachable, the
-extension falls back to a local estimate from transcripts (marked `*`/`~`) and the dropdown
-status line shows the error.
+extension falls back to a local estimate from your transcripts (marked `*`/`~`) and the
+dropdown status line shows the error.
 
-## Requirements
+## Troubleshooting
 
-- GNOME Shell **48** (X11 or Wayland)
-- [Claude Code](https://claude.com/claude-code) installed and signed in (the extension reads its local files)
+- **Don't see it after installing?** You must reload the shell (see [Install](#install)).
+  Then check it's on: `gnome-extensions info claude-usage@aidan.local`.
+- **Usage shows `n/a` or a `⚠` error?** Make sure Claude Code is signed in. A red
+  `HTTP 429` just means the API is rate-limiting — it recovers on its own.
+- **Watch for errors while it runs:** `journalctl -f -o cat /usr/bin/gnome-shell | grep -i claude-usage`
 
-## Build / release (maintainers)
+## Contributing / maintainers
 
-Build a distributable zip locally (needs `libglib2.0-bin` + `zip`):
-
-```sh
-./build.sh          # → dist/claude-usage.shell-extension.zip
-```
-
-Releases are automated: pushing a `v*` tag triggers `.github/workflows/release.yml`, which
-builds the zip and attaches it to a GitHub Release (so the one-liner always grabs the newest):
-
-```sh
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-## Layout
-
-```
-claude-usage@aidan.local/   the extension
-  metadata.json             uuid, shell-version, settings-schema
-  extension.js              enable()/disable(), panel placement
-  dataService.js            file I/O, usage API (libsoup), refresh engine
-  blocks.js                 pure 5h-window math (unit-tested)
-  indicator.js              panel button + dropdown UI
-  prefs.js                  preferences (libadwaita)
-  stylesheet.css            colours
-  schemas/                  GSettings schema
-  icons/                    robot + speedometer SVGs
-build.sh                    build the release zip
-install.sh                  install from source
-online-install.sh           one-liner installer (downloads latest release)
-test/blocks-test.js         `gjs -m test/blocks-test.js`
-```
+Building a zip, cutting a release, running the tests, and the repo layout live in
+**[MAINTAINERS.md](MAINTAINERS.md)**.
 
 ## License
 
