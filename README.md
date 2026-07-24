@@ -8,9 +8,10 @@ Panel: `🤖 1/3 │ ⏱ 13% · 4h13m`
 - speedometer + real 5-hour utilization and reset countdown
 
 
-<img width="438" height="32" alt="image" src="https://github.com/user-attachments/assets/98143976-cc52-4031-9ced-987a4748e51f" />
+<img width="392" height="36" alt="image" src="https://github.com/user-attachments/assets/49a81f29-fa9e-4e32-9546-c875df7e232b" />
 <br>
-<img width="392" height="34" alt="image" src="https://github.com/user-attachments/assets/c3df88a5-3040-4a63-8d14-cc184eb3df16" />
+<img width="506" height="636" alt="image" src="https://github.com/user-attachments/assets/f53791f5-7f1d-4b1f-9e8b-60f7faf67cc5" />
+
 
 
 
