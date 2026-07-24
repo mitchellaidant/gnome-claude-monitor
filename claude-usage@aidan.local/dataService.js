@@ -231,10 +231,18 @@ export class DataService {
 
         const startOfDay = startOfLocalDay(now);
         let todayTokens = 0;
+        // Per-session token totals over the retained window, joined onto the live
+        // sessions below by sessionId (the transcript's own sessionId == the session
+        // file's sessionId). Covers this agent's whole working period (~26h retention).
+        const tokensBySession = new Map();
         for (const e of entries) {
             if (e.ts >= startOfDay)
                 todayTokens += e.tokens;
+            if (e.sessionId)
+                tokensBySession.set(e.sessionId, (tokensBySession.get(e.sessionId) || 0) + e.tokens);
         }
+        for (const s of sessions)
+            s.tokens = tokensBySession.get(s.sessionId) || 0;
 
         const busyCount = sessions.filter(s => s.status === 'busy').length;
         const idleCount = sessions.length - busyCount;
@@ -577,6 +585,7 @@ export class DataService {
             tokens: sumTokens(usage, COUNT_CACHE_TOKENS),
             model: (obj.message && obj.message.model) || '',
             requestId: obj.requestId || null,
+            sessionId: obj.sessionId || null,
         };
     }
 

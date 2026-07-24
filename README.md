@@ -38,7 +38,8 @@ Open settings any time: `gnome-extensions prefs claude-usage@aidan.local`.
 ## What it shows
 
 **Dropdown:**
-- **Sessions** — one row per live session: project name, status dot (busy/idle), uptime
+- **Sessions** — one row per live session: project name, status dot (busy/idle), uptime,
+  and that session's token usage (per-agent tokens over the last ~26h; hidden when idle beyond that window)
 - **Usage** — 5h window (% bar + reset countdown), weekly window (% + reset + any
   model-specific opus/sonnet limits), plan tier, today's tokens
 - **Status line** — `Updated 12s ago · source: api`, or in red `⚠ Pull failed: HTTP 429`
@@ -54,7 +55,7 @@ within it — changes apply live.
 | Sessions + busy/idle status | `~/.claude/sessions/*.json` (filtered to live PIDs via `/proc`) — local |
 | 5h + weekly usage % and reset | `GET https://api.anthropic.com/api/oauth/usage` — the same endpoint Claude Code's `/usage` and claude.ai/settings/usage use |
 | Plan tier | `~/.claude.json` (`oauthAccount`) — local |
-| Today's tokens | `~/.claude/projects/*/*.jsonl` — local |
+| Today's tokens + per-session tokens | `~/.claude/projects/*/*.jsonl` — local (transcript entries joined to sessions by `sessionId`) |
 
 The usage call uses your existing local OAuth token from `~/.claude/.credentials.json` as a
 Bearer token to read **your own** usage. The token is read locally and sent only to

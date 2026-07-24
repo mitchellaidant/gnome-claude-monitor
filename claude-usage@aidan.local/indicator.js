@@ -225,7 +225,8 @@ class ClaudeIndicator extends PanelMenu.Button {
             row.dot.text = busy ? '●' : '◌';
             row.name.text = s.project;
             const up = s.startedAt ? fmtDuration(state.now - s.startedAt) : '';
-            row.detail.text = `${s.status}${up ? `  ·  up ${up}` : ''}`;
+            const tok = s.tokens ? `  ·  ${fmtTokens(s.tokens)} tok` : '';
+            row.detail.text = `${s.status}${up ? `  ·  up ${up}` : ''}${tok}`;
         }
         for (const [id, row] of this._sessionRows) {
             if (!present.has(id)) {
